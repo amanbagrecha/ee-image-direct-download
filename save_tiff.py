@@ -5,7 +5,6 @@ import os
 import rasterio as rs
 import numpy as np
 
-
 # Initialize the library. Also make sure to authenticate using ee.Authenticate()
 # if you do not have earthengine token on your machine
 ee.Initialize()
@@ -39,7 +38,7 @@ def xcor(y_pt, crs):
     return wrap
 
 
-def generate_points(file_name, pixel_size):
+def generatePoints(file_name, pixel_size):
 
     # read the farm and convert to geojson
     feature = gpd.read_file(file_name).__geo_interface__
@@ -52,7 +51,7 @@ def generate_points(file_name, pixel_size):
     return x_pt, y_pt, minx, maxy
 
 
-def get_dataframe(img_col, feature, input_band, crs):
+def getDataframe(img_col, feature, input_band, crs):
 
     imgcol = ee.ImageCollection(img_col).select(input_band)
     df = pd.DataFrame(imgcol.getRegion(feature.geometry(), 10, crs).getInfo())
@@ -62,7 +61,7 @@ def get_dataframe(img_col, feature, input_band, crs):
     return df
 
 
-def save_tiff(nut, data_array, transform, crs):
+def saveTiff(nut, data_array, transform, crs):
 
     file_name = os.path.basename(nut).split('.')[0]
 
@@ -96,7 +95,7 @@ if __name__ == "__main__":
     start_date = '2020-02-01'
     end_date = '2020-02-08'
 
-    x_pt, y_pt, minx, maxy = generate_points(file_name, pixel_size)
+    x_pt, y_pt, minx, maxy = generatePoints(file_name, pixel_size)
     geometry = ee.FeatureCollection(x_pt.map(xcor(y_pt, CRS))).flatten()
 
     s2_sr = ee.ImageCollection("COPERNICUS/S2_SR")
@@ -111,9 +110,9 @@ if __name__ == "__main__":
     len_y = len(y_pt.getInfo())
     len_x = len(x_pt.getInfo())
 
-    df = get_dataframe(imgCollection, geometry, input_bands, CRS)
+    df = getDataframe(imgCollection, geometry, input_bands, CRS)
     data_matrix = df[input_bands].values.reshape(len_y, len_x)
     data_matrix = np.flip(data_matrix, axis=0)
     transform = rs.transform.from_origin(minx, maxy, pixel_size, pixel_size)
 
-    save_tiff("b4_band", data_matrix, transform, CRS)
+    saveTiff("b4_band", data_matrix, transform, CRS)
