@@ -10,7 +10,7 @@ In this post I show a trick which can let you download upto 100 times larger siz
 
 We will utilize earth engine python client so that all the geopython goodies can be simultaneously utilised.
 
-To begin with, I have a geopackage containing a polygon, which is our AOI. We aim to download sentinel-2 NDVI for the region. The ideal way would be to use the in-built `Export` option, but in our case we would use the `getRegion` method along with creating a point grid over our AOI with spacing equivalent to the pixel size.
+To begin with, I have a geopackage containing a polygon, which is our AOI. We aim to download sentinel-2 B4 band for the region. The ideal way would be to use the in-built `Export` option, but in our case we would use the `getRegion` method along with creating a point grid over our AOI with spacing equivalent to the pixel size.
 
 ![](https://i.imgur.com/IA5OTuN.png)
 
